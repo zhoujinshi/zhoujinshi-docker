@@ -53,6 +53,16 @@ RUN cd /root && pecl download swoole && \
     
 RUN docker-php-ext-enable swoole
 
+RUN pecl install xdebug && docker-php-ext-enable xdebug\
+    &&  echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/xdebug.ini\
+    && echo "xdebug.remote_host=127.0.0.1" >> /usr/local/etc/php/conf.d/xdebug.ini\
+    && echo "xdebug.remote_port=9000" >> /usr/local/etc/php/conf.d/xdebug.ini\
+    && echo "xdebug.remote_connect_back=0" >> /usr/local/etc/php/conf.d/xdebug.ini\
+    && echo "xdebug.profiler_enable=1" >> /usr/local/etc/php/conf.d/xdebug.ini\
+    && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/xdebug.ini\
+    && echo "xdebug.remote_log=/var/www/log/xdebug.log" >> /usr/local/etc/php/conf.d/xdebug.ini
+
+
 #install redis
 # 
 #ENV PHPREDIS_VERSION php7
