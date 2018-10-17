@@ -2,6 +2,7 @@ FROM alpine:3.8
 
 LABEL maintainer="jinge <admin@cnbbx.com>" version="1.0"
 
+ENV LANG zh_CN.UTF-8
 ENV TIME_ZONE Asia/Shanghai
 RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/main/" > /etc/apk/repositories && echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/community/" >> /etc/apk/repositories \
     && apk update && apk add --no-cache -U tzdata \

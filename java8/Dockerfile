@@ -1,13 +1,11 @@
 FROM alpine:3.4
 
 # Default to UTF-8 file.encoding
-ENV LANG C.UTF-8
-ENV TZ Asia/shanghai
-ADD localtime /etc/localtime;
-
-RUN apk update && echo "https://mirrors.aliyun.com/alpine/latest-stable/main/" >> /etc/apk/repositories \
-    && echo "https://mirrors.aliyun.com/alpine/latest-stable/community/" >> /etc/apk/repositories \
-    && apk add --no-cache curl && echo $TZ > /etc/timezone
+ENV LANG zh_CN.UTF-8
+ENV TIME_ZONE Asia/Shanghai
+RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/main/" > /etc/apk/repositories && echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/community/" >> /etc/apk/repositories \
+    && apk update && apk add --no-cache -U tzdata \
+    && cp /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime && echo "${TIME_ZONE}" > /etc/timezone && apk del tzdata
 
 RUN { \
 		echo '#!/bin/sh'; \
