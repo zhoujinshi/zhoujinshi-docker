@@ -116,12 +116,13 @@ web:
     - ./nginx.conf:/etc/nginx/nginx.conf:ro
   command: [nginx-debug, '-g', 'daemon off;']
 ```
+
+### PHP调用：
+
 ~~~
-PHP调用：
+docker run --name cnbbx_fpm -p 9000:9000 -v /var/www/html:/var/www/html -d zhoujinshi/php7-fpm
 
-docker run --name cnbbx-fpm -p 9000:9000 -v /some/content:/var/www/html -d zhoujinshi/php7-fpm
-
-docker run --name cnbbx-nginx -p 80:80 -v /some/content:/var/www/html \
--v `pwd`/vhosts/:/etc/nginx/conf.d/ --link=cnbbx-fpm:zhoujinshi/php7-fpm \
+docker run --name cnbbx_nginx -p 80:80 -v /var/www/html:/var/www/html \
+-v `pwd`/vhosts/:/etc/nginx/conf.d/ --link=cnbbx_fpm:zhoujinshi/php7-fpm \
 -d zhoujinshi/nginx1.15
 ~~~
