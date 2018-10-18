@@ -1,0 +1,11 @@
+server_addr: web.cntrunk.com:3444
+trust_host_root_certs: false
+tunnels:
+  http:
+    subdomain: www
+    proto:
+      http: 80
+  ssh:
+    proto:
+      tcp: 192.168.0.3:22
+    remote_port: 1000
