@@ -55,6 +55,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 		--with-compat \
 		--with-file-aio \
 		--with-http_v2_module \
+		--add-module=../nginx-http-flv-module \
+		--add-module=../ngx_cache_purge-2.3 \
 	" \
 	&& addgroup -S nginx \
 	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
@@ -66,13 +68,15 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 		pcre-dev \
 		zlib-dev \
 		linux-headers \
-		curl \
+		wget \
 		gnupg1 \
 		libxslt-dev \
 		gd-dev \
 		geoip-dev \
-	&& curl -fSL https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz -o nginx.tar.gz \
-	&& curl -fSL https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc  -o nginx.tar.gz.asc \
+	&& wget -O nginx-http-flv-module.tar.gz "http://www.cntrunk.com/nginx-http-flv-module.tar.gz" \
+	&& wget -O ngx_cache_purge.tar.gz "http://www.cntrunk.com/ngx_cache_purge-2.3.tar.gz" \
+	&& wget -O nginx.tar.gz "https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz" \
+	&& wget -O nginx.tar.gz.asc "https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
 	&& found=''; \
 	for server in \
@@ -90,6 +94,10 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& mkdir -p /usr/src \
 	&& tar -zxC /usr/src -f nginx.tar.gz \
 	&& rm nginx.tar.gz \
+	&& tar -zxC /usr/src -f nginx-http-flv-module.tar.gz \
+	&& rm nginx-http-flv-module.tar.gz \
+	&& tar -zxC /usr/src -f ngx_cache_purge.tar.gz \
+	&& rm ngx_cache_purge.tar.gz \
 	&& cd /usr/src/nginx-$NGINX_VERSION \
 	&& ./configure $CONFIG --with-debug \
 	&& make -j$(getconf _NPROCESSORS_ONLN) \
@@ -115,6 +123,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& strip /usr/sbin/nginx* \
 	&& strip /usr/lib/nginx/modules/*.so \
 	&& rm -rf /usr/src/nginx-$NGINX_VERSION \
+	&& rm -rf /usr/src/nginx-http-flv-module \
+	&& rm -rf /usr/src/ngx_cache_purge-2.3 \
 	\
 	# Bring in gettext so we can get `envsubst`, then throw
 	# the rest away. To do this, we need to install `gettext`
@@ -148,6 +158,7 @@ COPY vhosts/default.conf /etc/nginx/conf.d/default.conf
 WORKDIR /var/www/html
 
 EXPOSE 80
+EXPOSE 1935
 
 STOPSIGNAL SIGTERM
 
