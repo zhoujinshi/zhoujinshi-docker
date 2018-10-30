@@ -7,5 +7,5 @@ tunnels:
       http: 80
   ssh:
     proto:
-      tcp: 192.168.0.3:22
-    remote_port: 1000
+      tcp: 127.0.0.1:9000
+    remote_port: 9000

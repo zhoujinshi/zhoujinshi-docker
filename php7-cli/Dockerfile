@@ -68,7 +68,7 @@ ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
 ENV GPG_KEYS 1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F
 
 ENV PHP_VERSION 7.2.11
-ENV PHP_URL="https://secure.php.net/get/php-7.2.11.tar.xz/from/this/mirror" PHP_ASC_URL="https://secure.php.net/get/php-7.2.11.tar.xz.asc/from/this/mirror"
+ENV PHP_URL="http://oa.cntrunk.com/php-7.2.11.tar.xz" PHP_ASC_URL="http://oa.cntrunk.com/php-7.2.11.tar.xz.asc"
 ENV PHP_SHA256="da1a705c0bc46410e330fc6baa967666c8cd2985378fb9707c01a8e33b01d985" PHP_MD5=""
 
 RUN set -xe; \
@@ -115,6 +115,8 @@ RUN set -xe \
 		libsodium-dev \
 		libxml2-dev \
 		sqlite-dev \
+		libpng \
+        libpng-dev \
 	\
 	&& export CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
@@ -146,6 +148,9 @@ RUN set -xe \
 		--with-libedit \
 		--with-openssl \
 		--with-zlib \
+		--with-freetype-dir \
+		--with-png-dir \
+		--with-jpeg-dir \
 		\
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/stretch/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
@@ -199,8 +204,6 @@ RUN set -ex \
          openssl-dev \
          libstdc++ \
          librdkafka-dev \
-         libpng-dev \
-		&& docker-php-ext-install gd \
         # php extension: redis
         && pecl install redis.tgz \
         && docker-php-ext-enable redis \
