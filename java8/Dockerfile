@@ -3,8 +3,7 @@ FROM alpine:3.8
 # Default to UTF-8 file.encoding
 ENV LANG zh_CN.UTF-8
 ENV TIME_ZONE Asia/Shanghai
-RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/main/" >> /etc/apk/repositories && echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/community/" >> /etc/apk/repositories \
-    && apk update && apk add --no-cache -U tzdata \
+RUN apk update && apk add --no-cache -U tzdata \
     && cp /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime && echo "${TIME_ZONE}" > /etc/timezone && apk del tzdata
 
 # add a simple script that can auto-detect the appropriate JAVA_HOME value
