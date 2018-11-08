@@ -8,7 +8,7 @@ ENV SWOOLE_VERSION=4.2.1 \
 RUN set -ex \
         && cd /tmp \
         # && curl -SL "http://pecl.php.net/get/swoole-${SWOOLE_VERSION}.tgz" -o swoole.tgz \
-        && curl -SL "http://www.cntrunk.com/swoole-${SWOOLE_VERSION}.tgz" -o swoole.tgz \
+		&& wget -O swoole.tgz "http://www.cntrunk.com/swoole-${SWOOLE_VERSION}.tgz" \
         && ls -alh \
         && apk update \
         && apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
@@ -21,6 +21,7 @@ RUN set -ex \
         # php extension: swoole
         && pecl install swoole.tgz \
         && docker-php-ext-enable swoole \
-        && apk del .phpize-deps
+        && apk del .phpize-deps \
+		&& rm /tmp/*
 
 CMD ["php", "-a"]

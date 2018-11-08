@@ -115,8 +115,6 @@ RUN set -xe \
 		libsodium-dev \
 		libxml2-dev \
 		sqlite-dev \
-		libpng \
-        libpng-dev \
 	\
 	&& export CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
@@ -148,9 +146,6 @@ RUN set -xe \
 		--with-libedit \
 		--with-openssl \
 		--with-zlib \
-		--with-freetype-dir \
-		--with-png-dir \
-		--with-jpeg-dir \
 		\
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/stretch/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
@@ -192,8 +187,8 @@ RUN echo "opcache.enable_cli=0" >>  /usr/local/etc/php/conf.d/docker-php-ext-opc
     && echo "error_log=/dev/stderr" >> /usr/local/etc/php/conf.d/log.ini && echo "date.timezone=Asia/Shanghai" > /usr/local/etc/php/conf.d/date.ini
 
 RUN set -ex \
-        && cd /tmp \
-        && curl -SL "http://pecl.php.net/get/redis-4.1.1.tgz" -o redis.tgz \
+        && cd /usr/src \
+		&& wget -O redis.tgz "http://pecl.php.net/get/redis-4.1.1.tgz" \
         && ls -alh \
         && apk update \
         && apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
@@ -204,23 +199,25 @@ RUN set -ex \
          openssl-dev \
          libstdc++ \
          librdkafka-dev \
+		 freetype \
+		 freetype-dev \
+		 libpng \
+		 libjpeg-turbo \
+		 libjpeg \
+		 libpng-dev \
+		 jpeg-dev \
+		 libjpeg-turbo \
+		 libjpeg-turbo-dev \
+		&& docker-php-ext-configure gd --with-freetype-dir=/usr/lib/ --with-png-dir=/usr/lib/ --with-jpeg-dir=/usr/lib/ --with-gd \
+		&& docker-php-ext-install gd \
         # php extension: redis
         && pecl install redis.tgz \
         && docker-php-ext-enable redis \
         # php extension: bcmath
         && docker-php-ext-install bcmath \
-		&& curl -SL 'http://pecl.php.net/get/xdebug-2.6.1.tgz' -o xdebug.tar.gz \
-		&& mkdir -p xdebug \
-		&& tar -xf xdebug.tar.gz -C xdebug --strip-components=1 \
-		&& rm xdebug.tar.gz \
-		&& ( \
-		cd xdebug \
-		&& phpize \
-		&& ./configure --enable-xdebug \
-		&& make -j$(nproc) \
-		&& make install \
-		) \
-		&& rm -r xdebug \
+        # php extension: xdebug
+		&& wget -O xdebug.tgz "http://pecl.php.net/get/xdebug-2.6.1.tgz" \
+        && pecl install xdebug.tgz \
 		&& docker-php-ext-enable xdebug \
 		&& apk del .phpize-deps \
 		&& echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/xdebug.ini\
@@ -229,7 +226,8 @@ RUN set -ex \
 		&& echo "xdebug.remote_connect_back=0" >> /usr/local/etc/php/conf.d/xdebug.ini\
 		&& echo "xdebug.profiler_enable=1" >> /usr/local/etc/php/conf.d/xdebug.ini\
 		&& echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/xdebug.ini\
-		&& echo "xdebug.remote_log=/var/www/log/xdebug.log" >> /usr/local/etc/php/conf.d/xdebug.ini
+		&& echo "xdebug.remote_log=/var/www/log/xdebug.log" >> /usr/local/etc/php/conf.d/xdebug.ini\
+		&& rm /usr/src/*
 	
 ENTRYPOINT ["docker-php-entrypoint"]
 
