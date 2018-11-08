@@ -67,9 +67,12 @@ RUN { \
 VOLUME /var/lib/mysql
 # Config files
 COPY config/ /etc/mysql/
-RUN apt-get install -y tzdata=2018d-1 && ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && dpkg-reconfigure -f noninteractive tzdata
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
+
+ENV LANG en_US.utf8
+RUN ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo Asia/Shanghai > /etc/timezone
+	
 ENTRYPOINT ["docker-entrypoint.sh"]
 
 EXPOSE 3306 33060
