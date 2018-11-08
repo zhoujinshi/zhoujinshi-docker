@@ -70,7 +70,7 @@ COPY config/ /etc/mysql/
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
 
-ENV LANG en_US.utf8
+ENV LANG zh_CN.UTF-8
 RUN ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo Asia/Shanghai > /etc/timezone
 	
 ENTRYPOINT ["docker-entrypoint.sh"]
