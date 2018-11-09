@@ -12,6 +12,7 @@ Nginx (pronounced "engine-x") is an open source reverse proxy server for HTTP, H
 
 ```console
 $ docker run --name cnbbx-nginx -p 80:80 -v /some/content:/usr/share/nginx/html -d zhoujinshi/nginx1.15
+docker run --name cnbbx_nginx -p 80:80 --expose 1935 -p 1935:1935 -v /var/www/html:/var/www/html -v `pwd`/vhosts/:/etc/nginx/conf.d/ --link=cnbbx_fpm:zhoujinshi/php7-fpm -v `pwd`/nginx.conf:/etc/nginx/nginx.conf -d zhoujinshi/nginx1.15
 ```
 
 Alternatively, a simple `Dockerfile` can be used to generate a new image that includes the necessary content (which is a much cleaner solution than the bind mount above):
