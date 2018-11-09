@@ -55,7 +55,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 		--with-http_v2_module \
 		--add-module=../nginx-http-flv-module \
 		--add-module=../ngx_cache_purge-2.3  \
-		--add-module=../nginx-http-concat \
+		--add-module=../nginx-http-concat-1.2.2 \
 	" \
 	&& addgroup -S nginx \
 	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
