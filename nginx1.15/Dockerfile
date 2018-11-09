@@ -59,7 +59,6 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	" \
 	&& addgroup -S nginx \
 	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
-	&& adduser -D -S -h /var/cache/nginx/rtmp -s /sbin/nologin -G nginx nginx \
 	&& apk add --no-cache --virtual .build-deps \
 		gcc \
 		libc-dev \
@@ -150,7 +149,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& mv /tmp/envsubst /usr/local/bin/ \
 	# forward request and error logs to docker log collector
 	&& ln -sf /dev/stdout /var/log/nginx/access.log \
-	&& ln -sf /dev/stderr /var/log/nginx/error.log
+	&& ln -sf /dev/stderr /var/log/nginx/error.log \
+	&& chown -R -v nginx:nginx /var/cache/nginx/rtmp/
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY vhosts/default.conf /etc/nginx/conf.d/default.conf
