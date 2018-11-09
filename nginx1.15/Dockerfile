@@ -50,13 +50,12 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 		--with-stream_realip_module \
 		--with-stream_geoip_module=dynamic \
 		--with-http_slice_module \
-		--with-mail \
-		--with-mail_ssl_module \
 		--with-compat \
 		--with-file-aio \
 		--with-http_v2_module \
 		--add-module=../nginx-http-flv-module \
-		--add-module=../ngx_cache_purge-2.3 \
+		--add-module=../ngx_cache_purge-2.3  \
+		--add-module=../nginx-http-concat \
 	" \
 	&& addgroup -S nginx \
 	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
@@ -73,8 +72,9 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 		libxslt-dev \
 		gd-dev \
 		geoip-dev \
-	&& wget -O nginx-http-flv-module.tar.gz "http://www.cntrunk.com/nginx-http-flv-module.tar.gz" \
+	&& wget -O nginx-http-flv.tar.gz "http://www.cntrunk.com/nginx-http-flv-module.tar.gz" \
 	&& wget -O ngx_cache_purge.tar.gz "http://www.cntrunk.com/ngx_cache_purge-2.3.tar.gz" \
+	&& wget -O nginx-http-concat.tar.gz "http://www.cntrunk.com/nginx-http-concat-1.2.2.tar.gz" \
 	&& wget -O nginx.tar.gz "https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz" \
 	&& wget -O nginx.tar.gz.asc "https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
@@ -94,10 +94,12 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& mkdir -p /usr/src \
 	&& tar -zxC /usr/src -f nginx.tar.gz \
 	&& rm nginx.tar.gz \
-	&& tar -zxC /usr/src -f nginx-http-flv-module.tar.gz \
-	&& rm nginx-http-flv-module.tar.gz \
+	&& tar -zxC /usr/src -f nginx-http-flv.tar.gz \
+	&& rm nginx-http-flv.tar.gz \
 	&& tar -zxC /usr/src -f ngx_cache_purge.tar.gz \
 	&& rm ngx_cache_purge.tar.gz \
+	&& tar -zxC /usr/src -f nginx-http-concat.tar.gz \
+	&& rm nginx-http-concat.tar.gz \
 	&& cd /usr/src/nginx-$NGINX_VERSION \
 	&& ./configure $CONFIG --with-debug \
 	&& make -j$(getconf _NPROCESSORS_ONLN) \
@@ -126,6 +128,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& rm -rf /usr/src/nginx-$NGINX_VERSION \
 	&& rm -rf /usr/src/nginx-http-flv-module \
 	&& rm -rf /usr/src/ngx_cache_purge-2.3 \
+	&& rm -rf /usr/src/nginx-http-concat-1.2.2 \
 	\
 	# Bring in gettext so we can get `envsubst`, then throw
 	# the rest away. To do this, we need to install `gettext`
@@ -144,17 +147,13 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& apk del .build-deps \
 	&& apk del .gettext \
 	&& mv /tmp/envsubst /usr/local/bin/ \
-	\
-	# Bring in tzdata so users could set the timezones through the environment
-	# variables
-	&& apk add --no-cache tzdata \
-	\
 	# forward request and error logs to docker log collector
 	&& ln -sf /dev/stdout /var/log/nginx/access.log \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY vhosts/default.conf /etc/nginx/conf.d/default.conf
+COPY rtmp/stat.xsl /var/cache/nginx/rtmp/stat.xsl
 
 WORKDIR /var/www/html
 
