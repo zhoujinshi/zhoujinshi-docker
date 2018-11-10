@@ -155,6 +155,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY vhosts/default.conf /etc/nginx/conf.d/default.conf
 COPY stat.xsl /var/cache/nginx/rtmp/stat.xsl
+COPY sad.svg /usr/share/nginx/html/sad.svg
+COPY 404.html /usr/share/nginx/html/404.html
 COPY my_wrapper_script.sh /my_wrapper_script.sh
 
 WORKDIR /var/www/html
