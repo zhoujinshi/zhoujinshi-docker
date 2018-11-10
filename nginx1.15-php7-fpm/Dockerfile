@@ -97,11 +97,11 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& tar -zxC /usr/src -f nginx-http-flv.tar.gz \
 	&& rm nginx-http-flv.tar.gz \
 	&& tar -zxC /usr/src -f ngx_cache_purge.tar.gz \
-	&& mv ngx_cache_purge* ngx_cache_purge \
 	&& rm ngx_cache_purge.tar.gz \
+	&& mv ngx_cache_purge* ngx_cache_purge \
 	&& tar -zxC /usr/src -f nginx-http-concat.tar.gz \
-	&& mv nginx-http-concat* nginx-http-concat \
 	&& rm nginx-http-concat.tar.gz \
+	&& mv nginx-http-concat* nginx-http-concat \
 	&& cd /usr/src/nginx-$NGINX_VERSION \
 	&& ./configure $CONFIG --with-debug \
 	&& make -j$(getconf _NPROCESSORS_ONLN) \
