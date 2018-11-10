@@ -54,8 +54,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 		--with-file-aio \
 		--with-http_v2_module \
 		--add-module=../nginx-http-flv-module \
-		--add-module=../ngx_cache_purge  \
-		--add-module=../nginx-http-concat \
+		--add-module=../ngx_cache_purge-2.3  \
+		--add-module=../nginx-http-concat-1.2.2 \
 	" \
 	&& addgroup -S nginx \
 	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
@@ -98,10 +98,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& rm nginx-http-flv.tar.gz \
 	&& tar -zxC /usr/src -f ngx_cache_purge.tar.gz \
 	&& rm ngx_cache_purge.tar.gz \
-	&& mv ngx_cache_purge* ngx_cache_purge \
 	&& tar -zxC /usr/src -f nginx-http-concat.tar.gz \
 	&& rm nginx-http-concat.tar.gz \
-	&& mv nginx-http-concat* nginx-http-concat \
 	&& cd /usr/src/nginx-$NGINX_VERSION \
 	&& ./configure $CONFIG --with-debug \
 	&& make -j$(getconf _NPROCESSORS_ONLN) \
