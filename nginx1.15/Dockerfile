@@ -154,7 +154,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY vhosts/default.conf /etc/nginx/conf.d/default.conf
-COPY rtmp/stat.xsl /var/cache/nginx/rtmp/stat.xsl
+COPY stat.xsl /var/cache/nginx/rtmp/stat.xsl
 
 WORKDIR /var/www/html
 
