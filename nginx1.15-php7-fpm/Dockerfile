@@ -1,4 +1,4 @@
-FROM alpine:3.8
+FROM zhoujinshi/php7-fpm
 
 LABEL maintainer="admin <admin@cnbbx.com>"
 
@@ -54,8 +54,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 		--with-file-aio \
 		--with-http_v2_module \
 		--add-module=../nginx-http-flv-module \
-		--add-module=../ngx_cache_purge-2.3  \
-		--add-module=../nginx-http-concat-1.2.2 \
+		--add-module=../ngx_cache_purge  \
+		--add-module=../nginx-http-concat \
 	" \
 	&& addgroup -S nginx \
 	&& adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx \
@@ -97,8 +97,10 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& tar -zxC /usr/src -f nginx-http-flv.tar.gz \
 	&& rm nginx-http-flv.tar.gz \
 	&& tar -zxC /usr/src -f ngx_cache_purge.tar.gz \
+	&& mv ngx_cache_purge* ngx_cache_purge \
 	&& rm ngx_cache_purge.tar.gz \
 	&& tar -zxC /usr/src -f nginx-http-concat.tar.gz \
+	&& mv nginx-http-concat* nginx-http-concat \
 	&& rm nginx-http-concat.tar.gz \
 	&& cd /usr/src/nginx-$NGINX_VERSION \
 	&& ./configure $CONFIG --with-debug \
@@ -155,6 +157,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY vhosts/default.conf /etc/nginx/conf.d/default.conf
 COPY rtmp/stat.xsl /var/cache/nginx/rtmp/stat.xsl
+ADD *.sh /usr/local/bin/
 
 WORKDIR /var/www/html
 
@@ -163,4 +166,4 @@ EXPOSE 1935
 
 STOPSIGNAL SIGTERM
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["start.sh"]
