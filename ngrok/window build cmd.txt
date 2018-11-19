@@ -1,0 +1,4 @@
+cd /ngrok
+GOOS=windows GOARCH=amd64 make release-client
+cp -r /ngrok/bin ${MY_FILES}/bin
+exit

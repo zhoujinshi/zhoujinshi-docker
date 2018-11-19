@@ -6,14 +6,14 @@ if [ "${DOMAIN}" == "**None**" ]; then
     exit 1
 fi
 
-if [ ! -f "/ngrok/bin/ngrokd" ]; then
-    echo "ngrokd is not build,will be build it now..."
-    build.sh
-fi
-
-if [ ! -f "${MY_FILES}/base.pem" ]; then
+if [ ! -f "${MY_FILES}/ca.crt" ]; then
     echo "certificate is not build,will be build it now..."
     build.sh
 fi
 
-/ngrok/bin/ngrokd -tlsKey=${MY_FILES}/server.key -tlsCrt=${MY_FILES}/server.crt -domain="${DOMAIN}" -httpAddr=${HTTP_ADDR} -httpsAddr=${HTTPS_ADDR} -tunnelAddr=${TUNNEL_ADDR}
+if [ ! -f "${MY_FILES}/bin/ngrokd" ]; then
+    echo "ngrokd is not build,will be build it now..."
+    build.sh
+fi
+
+${MY_FILES}/bin/ngrokd -tlsKey=${MY_FILES}/server.key -tlsCrt=${MY_FILES}/server.crt -domain="${DOMAIN}" -httpAddr=${HTTP_ADDR} -httpsAddr=${HTTPS_ADDR} -tunnelAddr=${TUNNEL_ADDR}
