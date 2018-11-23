@@ -2,13 +2,12 @@ FROM zhoujinshi/php7-cli
 
 LABEL maintainer="jinge <admin@cnbbx.com>" version="1.0"
 
-ENV SWOOLE_VERSION=4.2.1 \
-    REDIS_VERSION=4.1.1
+ENV SWOOLE_VERSION=4.2.8 \
+    REDIS_VERSION=4.2.8
 
 RUN set -ex \
         && cd /tmp \
-        # && curl -SL "http://pecl.php.net/get/swoole-${SWOOLE_VERSION}.tgz" -o swoole.tgz \
-		&& wget -O swoole.tgz "http://www.cntrunk.com/swoole-${SWOOLE_VERSION}.tgz" \
+		&& wget -O swoole.tgz "http://oa.cntrunk.com/swoole-4.2.8.tgz" \
         && ls -alh \
         && apk update \
         && apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
@@ -22,6 +21,7 @@ RUN set -ex \
         && pecl install swoole.tgz \
         && docker-php-ext-enable swoole \
         && apk del .phpize-deps \
-		&& rm /tmp/*
+		&& rm -rf /tmp/* \
+		&& rm /usr/local/etc/php/conf.d/xdebug.ini
 
 CMD ["php", "-a"]
