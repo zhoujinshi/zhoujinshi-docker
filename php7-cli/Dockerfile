@@ -153,6 +153,8 @@ RUN set -xe \
 		--with-libedit \
 		--with-openssl \
 		--with-zlib \
+		--with-freetype-dir \
+		--with-jpeg-dir \
 		--with-gd \
 		--enable-fd-setsize=9999 \
 		\
