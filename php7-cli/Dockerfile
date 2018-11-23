@@ -155,6 +155,7 @@ RUN set -xe \
 		--with-zlib \
 		--with-freetype-dir \
 		--with-jpeg-dir \
+		--with-webp-dir \
 		--with-gd \
 		--enable-fd-setsize=9999 \
 		\
