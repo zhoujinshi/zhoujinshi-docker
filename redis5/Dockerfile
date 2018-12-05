@@ -1,25 +1,22 @@
 FROM alpine:3.8
 
-LABEL maintainer="jinge <admin@cnbbx.com>" version="1.0"
-
 ENV LANG zh_CN.UTF-8
 ENV TIME_ZONE Asia/Shanghai
-RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/main/" > /etc/apk/repositories && echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/community/" >> /etc/apk/repositories \
-    && apk update && apk add --no-cache -U tzdata \
-    && cp /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime && echo "${TIME_ZONE}" > /etc/timezone && apk del tzdata && mount -o remount rw / && sysctl vm.overcommit_memory=1
+
+RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/main/" > /etc/apk/repositories && echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/community/" >> /etc/apk/repositories
 
 # add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
 RUN addgroup -S redis && adduser -S -G redis redis
 
-RUN apk add --no-cache \
+RUN apk update && apk add --no-cache \
 # grab su-exec for easy step-down from root
 		'su-exec>=0.2' \
 # add tzdata for https://github.com/docker-library/redis/issues/138
-		tzdata
+		tzdata && cp /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime && apk del tzdata
 
-ENV REDIS_VERSION 4.0.11
-ENV REDIS_DOWNLOAD_URL http://download.redis.io/releases/redis-4.0.11.tar.gz
-ENV REDIS_DOWNLOAD_SHA fc53e73ae7586bcdacb4b63875d1ff04f68c5474c1ddeda78f00e5ae2eed1bbb
+ENV REDIS_VERSION 5.0.2
+ENV REDIS_DOWNLOAD_URL http://download.redis.io/releases/redis-5.0.2.tar.gz
+ENV REDIS_DOWNLOAD_SHA 937dde6164001c083e87316aa20dad2f8542af089dfcb1cbb64f9c8300cd00ed
 
 # for redis-sentinel see: http://redis.io/topics/sentinel
 RUN set -ex; \
@@ -66,14 +63,12 @@ RUN set -ex; \
 	redis-server --version
 
 RUN mkdir /data && chown redis:redis /data
-
+VOLUME /data
 WORKDIR /data
 
 COPY docker-entrypoint.sh /usr/local/bin/
+COPY redis.conf /path/to/redis.conf
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-COPY redis.conf /redis.conf
-
 EXPOSE 6379
-
-CMD ["redis-server"]
+CMD ["redis-server","/path/to/redis.conf"]

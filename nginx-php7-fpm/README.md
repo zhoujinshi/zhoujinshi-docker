@@ -120,9 +120,8 @@ web:
 ### PHP调用：
 
 ~~~
-docker run --name cnbbx_fpm -p 9000:9000 -v /var/www/html:/var/www/html -d zhoujinshi/php7-fpm
 
 docker run --name cnbbx_nginx -p 80:80 -v /var/www/html:/var/www/html \
--v `pwd`/vhosts/:/etc/nginx/conf.d/ --link=cnbbx_fpm:zhoujinshi/php7-fpm \
+-v `pwd`/vhosts/:/etc/nginx/conf.d/ \
 -d nginx1.15-php7-fpm
 ~~~
