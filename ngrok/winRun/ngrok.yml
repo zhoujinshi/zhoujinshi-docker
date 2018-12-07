@@ -9,3 +9,7 @@ tunnels:
     proto:
       tcp: 192.168.0.6:80
     remote_port: 9000
+  https:
+    proto:
+      tcp: 192.168.0.68:443
+    remote_port: 9001
