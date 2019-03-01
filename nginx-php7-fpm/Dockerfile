@@ -1,14 +1,8 @@
-FROM zhoujinshi/php7-fpm
+FROM registry.cn-hangzhou.aliyuncs.com/cnbbx/php7-fpm
 
 LABEL maintainer="admin <admin@cnbbx.com>"
 
-ENV LANG zh_CN.UTF-8
-ENV TIME_ZONE Asia/Shanghai
-RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/main/" > /etc/apk/repositories && echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/community/" >> /etc/apk/repositories \
-    && apk update && apk add --no-cache -U tzdata \
-    && cp /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime && echo "${TIME_ZONE}" > /etc/timezone && apk del tzdata
-
-ENV NGINX_VERSION 1.15.5
+ENV NGINX_VERSION 1.15.8
 
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& CONFIG="\
@@ -50,6 +44,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 		--with-stream_realip_module \
 		--with-stream_geoip_module=dynamic \
 		--with-http_slice_module \
+		--with-mail \
+		--with-mail_ssl_module \
 		--with-compat \
 		--with-file-aio \
 		--with-http_v2_module \
@@ -72,9 +68,9 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 		libxslt-dev \
 		gd-dev \
 		geoip-dev \
-	&& wget -O nginx-http-flv.tar.gz "http://www.cntrunk.com/nginx-http-flv-module.tar.gz" \
-	&& wget -O ngx_cache_purge.tar.gz "http://www.cntrunk.com/ngx_cache_purge-2.3.tar.gz" \
-	&& wget -O nginx-http-concat.tar.gz "http://www.cntrunk.com/nginx-http-concat-1.2.2.tar.gz" \
+	&& wget -O nginx-http-flv.tar.gz "http://www.cnbbx.com/nginx-http-flv-module.tar.gz" \
+	&& wget -O ngx_cache_purge.tar.gz "http://www.cnbbx.com/ngx_cache_purge-2.3.tar.gz" \
+	&& wget -O nginx-http-concat.tar.gz "http://www.cnbbx.com/nginx-http-concat-1.2.2.tar.gz" \
 	&& wget -O nginx.tar.gz "https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz" \
 	&& wget -O nginx.tar.gz.asc "https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
