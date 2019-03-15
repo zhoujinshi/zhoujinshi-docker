@@ -23,5 +23,5 @@ fi
 cp -r ca.crt /ngrok/assets/client/tls/ngrokroot.crt
 
 if [ ! -f "/ngrok/bin/ngrokd" ]; then
-	cd /ngrok && make release-server && GOOS=windows GOARCH=amd64 make release-client && cp -r /ngrok/bin ${MY_FILES}/bin && echo "build ok !" && cd ${MY_FILES}
+	cd /ngrok && make release-server && GOOS=windows GOARCH=amd64 make release-client && cp -r /ngrok/bin/* ${MY_FILES}/bin && echo "build ok !" && cd ${MY_FILES}
 fi

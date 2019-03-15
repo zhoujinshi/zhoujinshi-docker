@@ -10,7 +10,7 @@ GOOS=darwin GOARCH=386 make release-client
 GOOS=windows GOARCH=amd64 make release-client
 GOOS=windows GOARCH=386 make release-client
 
-cp -r /ngrok/bin ${MY_FILES}/bin
+cp -r /ngrok/bin/* ${MY_FILES}/bin
 
 cd ${MY_FILES}
 
