@@ -4,13 +4,13 @@
 no db 集群配置：
 docker network create redis-net && docker network prune
 
-docker run --restart=always --name cnbbx_redis_2 --sysctl net.core.somaxconn=1024 -d zhoujinshi/redis5 && \
-docker run --restart=always --name cnbbx_redis_3 --sysctl net.core.somaxconn=1024 -d zhoujinshi/redis5 && \
-docker run --restart=always --name cnbbx_redis_4 --sysctl net.core.somaxconn=1024 -d zhoujinshi/redis5 && \
-docker run --restart=always --name cnbbx_redis_5 --sysctl net.core.somaxconn=1024 -d zhoujinshi/redis5 && \
-docker run --restart=always --name cnbbx_redis_6 --sysctl net.core.somaxconn=1024 -d zhoujinshi/redis5 && \
+docker run --restart=always --name cnbbx_redis_2 --sysctl net.core.somaxconn=1024 -d cnbbx/redis5 && \
+docker run --restart=always --name cnbbx_redis_3 --sysctl net.core.somaxconn=1024 -d cnbbx/redis5 && \
+docker run --restart=always --name cnbbx_redis_4 --sysctl net.core.somaxconn=1024 -d cnbbx/redis5 && \
+docker run --restart=always --name cnbbx_redis_5 --sysctl net.core.somaxconn=1024 -d cnbbx/redis5 && \
+docker run --restart=always --name cnbbx_redis_6 --sysctl net.core.somaxconn=1024 -d cnbbx/redis5 && \
 docker run --restart=always --name cnbbx_redis_1 --sysctl net.core.somaxconn=1024 --link cnbbx_redis_2 --link cnbbx_redis_3 \
---link cnbbx_redis_4 --link cnbbx_redis_5 --link cnbbx_redis_6 -p 6379:6379 -d zhoujinshi/redis5
+--link cnbbx_redis_4 --link cnbbx_redis_5 --link cnbbx_redis_6 -p 6379:6379 -d cnbbx/redis5
 
 
 
@@ -31,13 +31,13 @@ cnbbx_redis_5 cnbbx_redis_6
 
 ~~~
 docker run -p 6379:6379 -v /root/redis5/data:/data --name cnbbx_redis \
--d zhoujinshi/redis5
+-d cnbbx/redis5
 
-docker run --name cnbbx_redis -d zhoujinshi/redis5 redis-server --appendonly yes
+docker run --name cnbbx_redis -d cnbbx/redis5 redis-server --appendonly yes
 ~~~
 
 > cli：
 
 ~~~
-docker run -it --rm zhoujinshi/redis5 redis-cli
+docker run -it --rm cnbbx/redis5 redis-cli
 ~~~

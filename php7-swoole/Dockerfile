@@ -1,28 +1,16 @@
-FROM registry.cn-hangzhou.aliyuncs.com/cnbbx/php7-cli
+FROM registry.cn-hangzhou.aliyuncs.com/cnbbx/php7-fpm
 
 LABEL maintainer="jinge <admin@cnbbx.com>" version="1.0"
 
-ENV SWOOLE_VERSION=4.2.8 \
-    REDIS_VERSION=4.2.8
-
 RUN set -ex \
-        && cd /tmp \
-        && wget -O swoole.tgz "http://oa.cntrunk.com/swoole-4.2.8.tgz" \
-        && ls -alh \
-        && apk update \
-        && apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
-        # for swoole ext
-        && apk add --no-cache \
-         linux-headers \
-         openssl-dev \
-         libstdc++ \
-         librdkafka-dev \
-        # php extension: swoole
-        && pecl install swoole.tgz \
-        && docker-php-ext-enable swoole \
-        && apk del .phpize-deps \
-        && rm -rf /tmp/* \
-        && rm /usr/local/etc/php/conf.d/xdebug.ini \
-        && rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+	&& apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
+	# php extension: swoole
+	&& pecl install swoole \
+	&& apk del .phpize-deps \
+	&& docker-php-ext-enable swoole \
+	&& rm -rf /tmp/* \
+	&& rm /usr/local/etc/php/conf.d/xdebug.ini \
+	&& rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+	&& apk add libstdc++ && php -m
 
 CMD ["php", "-a"]

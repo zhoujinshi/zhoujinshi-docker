@@ -1,13 +1,13 @@
 # nexus
 =====
 
-[![](https://images.microbadger.com/badges/image/zhoujinshi/java8-nexus3.svg)](https://microbadger.com/images/zhoujinshi/java8-nexus3)
+[![](https://images.microbadger.com/badges/image/cnbbx/java8-nexus3.svg)](https://microbadger.com/images/cnbbx/java8-nexus3)
 
 A Dockerfile for Sonatype Nexus Repository Manager 3, based on Alpine.
 
 To run, binding the exposed port 8081 to the host.
 
-    $ docker run -d -p 8081:8081 --name nexus zhoujinshi/java8-nexus3
+    $ docker run -d -p 8081:8081 --name nexus cnbbx/java8-nexus3
     
 
 Notes
@@ -36,13 +36,13 @@ Notes
     
     These can be used supplied at runtime to control the JVM:
     
-        $ docker run -d -p 8081:8081 --name nexus -e JAVA_MAX_MEM=2048M zhoujinshi/java8-nexus3
+        $ docker run -d -p 8081:8081 --name nexus -e JAVA_MAX_MEM=2048M cnbbx/java8-nexus3
         
     
 *   As of version 3.4.0, Sonatype [recommends](https://support.sonatype.com/hc/en-us/articles/115006448847#filehandles) increasing the system file descriptor limit. In order to do this in Docker, you need to first make sure that the Docker daemon is configured with a ulimit >= 65536 in the systemd/upstart/daemon.json configuration. You may then include the ulimit on the container run command:
     
 
-    $ docker run -d -p 8081:8081 --ulimit nofile=65536 --name nexus zhoujinshi/java8-nexus3
+    $ docker run -d -p 8081:8081 --ulimit nofile=65536 --name nexus cnbbx/java8-nexus3
     
 
 ### SSL
@@ -51,14 +51,14 @@ If you want to run Nexus in SSL, you need to create a Java keystore file with yo
 
 You will need to mount your keystore to the appropriate directory and pass in the keystore password as well.
 
-    $ docker run -d -p 8443:8443 --name nexus -v /path/to/your-keystore.jks:/nexus-data/keystore.jks -e JKS_PASSWORD="changeit" zhoujinshi/java8-nexus3
+    $ docker run -d -p 8443:8443 --name nexus -v /path/to/your-keystore.jks:/nexus-data/keystore.jks -e JKS_PASSWORD="changeit" cnbbx/java8-nexus3
     
 
 Nexus will now serve its' UI on HTTPS on port 8443 and redirect HTTP requests to HTTPS.
 
 If you are going to run a Docker registry inside of Nexus, you will need to route to internal port 5000 as well.
 
-    $ docker run -d -p 5000:5000 -p 8443:8443 --name nexus -v /path/to/your-keystore.jks:/nexus-data/keystore.jks -e JKS_PASSWORD="changeit" zhoujinshi/java8-nexus3
+    $ docker run -d -p 5000:5000 -p 8443:8443 --name nexus -v /path/to/your-keystore.jks:/nexus-data/keystore.jks -e JKS_PASSWORD="changeit" cnbbx/java8-nexus3
     
 
 ### Persistent Data
@@ -71,13 +71,13 @@ for additional information.
     until no containers use them, a container can created specifically for  
     this purpose. This is the recommended approach.
     
-        $ docker run -d --name nexus-data zhoujinshi/java8-nexus3 echo "data-only container for Nexus"
-        $ docker run -d -p 8081:8081 --name nexus --volumes-from nexus-data zhoujinshi/java8-nexus3
+        $ docker run -d --name nexus-data cnbbx/java8-nexus3 echo "data-only container for Nexus"
+        $ docker run -d -p 8081:8081 --name nexus --volumes-from nexus-data cnbbx/java8-nexus3
         
     
 2.  _Mount a host directory as the volume_.
     
-        $ docker run -d -p 8081:8081 --name nexus -v /some/dir/nexus-data:/nexus-data zhoujinshi/java8-nexus3
+        $ docker run --restart=always -p 8081:8081 --name cnbbx_nexus -v nexus-data:/nexus-data -d cnbbx/java8-nexus3
 
 3. download offline indexed
     

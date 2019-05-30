@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Start the first process
 nohup php-fpm >/dev/null 2>&1 & 

@@ -1,14 +1,8 @@
-FROM alpine:3.8
+FROM registry.cn-hangzhou.aliyuncs.com/cnbbx/php7-swoole
 
 LABEL maintainer="admin <admin@cnbbx.com>"
 
-ENV LANG zh_CN.UTF-8
-ENV TIME_ZONE Asia/Shanghai
-RUN echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/main/" > /etc/apk/repositories && echo "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.8/community/" >> /etc/apk/repositories \
-    && apk update && apk add --no-cache -U tzdata \
-    && cp /usr/share/zoneinfo/${TIME_ZONE} /etc/localtime && echo "${TIME_ZONE}" > /etc/timezone && apk del tzdata
-
-ENV NGINX_VERSION 1.15.5
+ENV NGINX_VERSION 1.15.12
 
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& CONFIG="\
@@ -50,6 +44,8 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 		--with-stream_realip_module \
 		--with-stream_geoip_module=dynamic \
 		--with-http_slice_module \
+		--with-mail \
+		--with-mail_ssl_module \
 		--with-compat \
 		--with-file-aio \
 		--with-http_v2_module \
@@ -67,23 +63,24 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 		pcre-dev \
 		zlib-dev \
 		linux-headers \
+		curl \
 		wget \
 		gnupg1 \
 		libxslt-dev \
 		gd-dev \
 		geoip-dev \
-	&& wget -O nginx-http-flv.tar.gz "http://www.cntrunk.com/nginx-http-flv-module.tar.gz" \
-	&& wget -O ngx_cache_purge.tar.gz "http://www.cntrunk.com/ngx_cache_purge-2.3.tar.gz" \
-	&& wget -O nginx-http-concat.tar.gz "http://www.cntrunk.com/nginx-http-concat-1.2.2.tar.gz" \
+	&& wget -O nginx-http-flv.tar.gz "http://www.cnbbx.com/nginx-http-flv-module.tar.gz" \
+	&& wget -O ngx_cache_purge.tar.gz "http://www.cnbbx.com/ngx_cache_purge-2.3.tar.gz" \
+	&& wget -O nginx-http-concat.tar.gz "http://www.cnbbx.com/nginx-http-concat-1.2.2.tar.gz" \
 	&& wget -O nginx.tar.gz "https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz" \
 	&& wget -O nginx.tar.gz.asc "https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
 	&& found=''; \
 	for server in \
-		ha.pool.sks-keyservers.net \
 		hkp://keyserver.ubuntu.com:80 \
 		hkp://p80.pool.sks-keyservers.net:80 \
 		pgp.mit.edu \
+		ha.pool.sks-keyservers.net \
 	; do \
 		echo "Fetching GPG key $GPG_KEYS from $server"; \
 		gpg --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$GPG_KEYS" && found=yes && break; \
@@ -155,12 +152,15 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY vhosts/default.conf /etc/nginx/conf.d/default.conf
 COPY stat.xsl /var/cache/nginx/rtmp/stat.xsl
+COPY sad.svg /usr/share/nginx/html/sad.svg
+COPY 404.html /usr/share/nginx/html/404.html
+COPY my_wrapper_script.sh /my_wrapper_script.sh
 
-WORKDIR /var/www/html
+RUN apk add subversion git && chmod +x /my_wrapper_script.sh
 
 EXPOSE 80
 EXPOSE 1935
 
 STOPSIGNAL SIGTERM
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/bin/sh","/my_wrapper_script.sh"]

@@ -191,3 +191,5 @@ Windows Server 2008 for Itanium-Based Systems |4DWFP-JF3DJ-B7DTH-78FJB-PDRHK
 
 
 TODO:office
+
+docker run --restart=always --name cnbbx_kms -p 1688:1688 -d cnbbx/kms-server

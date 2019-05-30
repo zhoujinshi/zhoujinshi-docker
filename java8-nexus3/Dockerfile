@@ -1,4 +1,4 @@
-FROM zhoujinshi/java8
+FROM cnbbx/java8
 
 ENV SONATYPE_DIR="/opt/sonatype"
 ENV NEXUS_VERSION="3.12.1-01" \
