@@ -1,4 +1,4 @@
-FROM registry.cn-hangzhou.aliyuncs.com/cnbbx/php7-fpm
+FROM cnbbx/php7-fpm
 
 LABEL maintainer="jinge <admin@cnbbx.com>" version="1.0"
 
@@ -9,7 +9,7 @@ RUN set -ex \
 	&& apk del .phpize-deps \
 	&& docker-php-ext-enable swoole \
 	&& rm -rf /tmp/* \
-	&& rm /usr/local/etc/php/conf.d/xdebug.ini \
+	&& rm /usr/local/etc/php/conf.d/docker-php-conf-xdebug.ini \
 	&& rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
 	&& apk add libstdc++ && php -m
 

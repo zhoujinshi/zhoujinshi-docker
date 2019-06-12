@@ -123,6 +123,6 @@ web:
 
 docker run --restart=always --name cnbbx_nginx -p 80:80 -p 1935:1935 -p 443:443 -v /root/server/www:/var/www/html \
 -v /root/server/nginx:/etc/nginx/conf.d/ -v /root/server/ssl:/ssl -v /root/server/logs:/var/log/nginx  \
---link=cnbbx_mysql:zhoujinshi/mysql8 -d cnbbx/nginx-php7-fpm
+--link=cnbbx_mysql:cnbbx/mysql8 -d cnbbx/nginx-php7-fpm
 
 ~~~
