@@ -1,8 +1,8 @@
 FROM cnbbx/php7-swoole
 
-LABEL maintainer="admin <admin@cnbbx.com>"
+LABEL maintainer="admin <admin@cnbbx.com>" version="1.0"
 
-ENV NGINX_VERSION 1.15.12
+ENV NGINX_VERSION 1.17.0
 
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& CONFIG="\
