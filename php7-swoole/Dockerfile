@@ -2,6 +2,8 @@ FROM cnbbx/php7-fpm
 
 LABEL maintainer="jinge <admin@cnbbx.com>" version="1.0"
 
+COPY cmdrun.sh /cmdrun.sh
+
 RUN set -ex \
 	&& apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
 	# php extension: swoole

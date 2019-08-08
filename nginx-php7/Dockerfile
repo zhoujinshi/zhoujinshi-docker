@@ -2,7 +2,7 @@ FROM cnbbx/php7-swoole
 
 LABEL maintainer="admin <admin@cnbbx.com>" version="1.0"
 
-ENV NGINX_VERSION 1.17.0
+ENV NGINX_VERSION 1.17.2
 
 RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& CONFIG="\
@@ -154,13 +154,13 @@ COPY vhosts/default.conf /etc/nginx/conf.d/default.conf
 COPY stat.xsl /var/cache/nginx/rtmp/stat.xsl
 COPY sad.svg /usr/share/nginx/html/sad.svg
 COPY 404.html /usr/share/nginx/html/404.html
-COPY my_wrapper_script.sh /my_wrapper_script.sh
+COPY docker_run.sh /docker_run.sh
 
-RUN apk add subversion git && chmod +x /my_wrapper_script.sh
+RUN apk add subversion git
 
 EXPOSE 80
 EXPOSE 1935
 
 STOPSIGNAL SIGTERM
 
-CMD ["/bin/sh","/my_wrapper_script.sh"]
+CMD ["/bin/sh","/docker_run.sh"]
