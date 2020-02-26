@@ -54,8 +54,20 @@ while sleep 60; do
   PROCESS_4_STATUS=$?
   # If the greps above find anything, they exit with 0 status
   # If they are not both 0, then something is wrong
-  if [ $PROCESS_1_STATUS -ne 0 -o $PROCESS_2_STATUS -ne 0 -o $PROCESS_3_STATUS -ne 0 -o $PROCESS_4_STATUS -ne 0 ]; then
-	echo "One of the processes has already exited."
-	exit 1
+  if [ $PROCESS_1_STATUS -ne 0 ]; then
+    echo "asterisk of the processes has already exited."
+    nohup asterisk -c >/dev/null 2>&1 & 
+  fi
+  if [ $PROCESS_2_STATUS -ne 0 ]; then
+    echo "nginx of the processes has already exited."
+    nohup nginx >/dev/null 2>&1 &
+  fi
+  if [ $PROCESS_3_STATUS -ne 0 ]; then
+    echo "php-fpm of the processes has already exited."
+    nohup php-fpm >/dev/null 2>&1 & 
+  fi
+  if [ $PROCESS_4_STATUS -ne 0 ]; then
+    echo "$cmdname of the processes has already exited."
+    nohup $cmdrun >/dev/null 2>&1 &
   fi
 done

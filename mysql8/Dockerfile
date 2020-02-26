@@ -8,12 +8,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends gnupg dirmngr &
 # add gosu for easy step-down from root
 ENV GOSU_VERSION 1.7
 
-RUN mv /etc/apt/sources.list /etc/apt/sources.list.bak && \
-	echo "deb http://mirrors.163.com/debian/ jessie main non-free contrib" >/etc/apt/sources.list && \
-	echo "deb http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list && \
-	echo "deb-src http://mirrors.163.com/debian/ jessie main non-free contrib" >>/etc/apt/sources.list && \
-	echo "deb-src http://mirrors.163.com/debian/ jessie-proposed-updates main non-free contrib" >>/etc/apt/sources.list
-
 RUN set -x \
 	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
 	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
@@ -78,7 +72,8 @@ COPY docker-entrypoint.sh /usr/local/bin/
 RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
 
 ENV LANG zh_CN.UTF-8
-RUN ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo Asia/Shanghai > /etc/timezone
+
+COPY /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 	
 ENTRYPOINT ["docker-entrypoint.sh"]
 

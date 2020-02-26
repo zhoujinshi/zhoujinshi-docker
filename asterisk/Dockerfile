@@ -1,4 +1,4 @@
-FROM cnbbx/nginx-php7-fpm
+FROM cnbbx/nginx-php7
 
 LABEL maintainer="admin <admin@cnbbx.com>" version="1.0"
 
