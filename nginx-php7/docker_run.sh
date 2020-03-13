@@ -1,4 +1,6 @@
 #!/bin/sh
+# Note: ulimit command itself is divided into soft and hard Settings, plus -H is hard, plus -S is soft default display is soft limit
+ulimit -SHn 9000;
 
 # Start the first process
 nohup php-fpm >/dev/null 2>&1 & 

@@ -11,26 +11,26 @@ Nginx (pronounced "engine-x") is an open source reverse proxy server for HTTP, H
 ## Hosting some simple static content
 
 ```console
-$ docker run --name cnbbx_nginx -p 80:80 -p 1935:1935 -v /var/www/html:/var/www/html -v `pwd`/vhosts/:/etc/nginx/conf.d/ -v `pwd`/nginx.conf:/etc/nginx/nginx.conf -d cnbbx/nginx-php7-fpm
+$ docker run --name cnbbx_nginx -p 80:80 -p 1935:1935 -v /var/www/html:/var/www/html -v `pwd`/vhosts/:/etc/nginx/conf.d/ -v `pwd`/nginx.conf:/etc/nginx/nginx.conf -d cnbbx/nginx-php7
 ```
 
 Alternatively, a simple `Dockerfile` can be used to generate a new image that includes the necessary content (which is a much cleaner solution than the bind mount above):
 
 ```dockerfile
-FROM cnbbx/nginx-php7-fpm
+FROM cnbbx/nginx-php7
 COPY static-html-directory /usr/share/nginx/html
 ```
 
 Place this file in the same directory as your directory of content ("static-html-directory"), run `docker build -t some-content-nginx .`, then start your container:
 
 ```console
-$ docker run --name cnbbx-nginx -d cnbbx/nginx-php7-fpm
+$ docker run --name cnbbx-nginx -d cnbbx/nginx-php7
 ```
 
 ## Exposing external port
 
 ```console
-$ docker run --name cnbbx-nginx -d -p 8080:80 cnbbx/nginx-php7-fpm
+$ docker run --name cnbbx-nginx -d -p 8080:80 cnbbx/nginx-php7
 ```
 
 Then you can hit `http://localhost:8080` or `http://host-ip:8080` in your browser.
@@ -38,7 +38,7 @@ Then you can hit `http://localhost:8080` or `http://host-ip:8080` in your browse
 ## Complex configuration
 
 ```console
-$ docker run --name my-custom-nginx-container -v /host/path/nginx.conf:/etc/nginx/nginx.conf:ro -d cnbbx/nginx-php7-fpm
+$ docker run --name my-custom-nginx-container -v /host/path/nginx.conf:/etc/nginx/nginx.conf:ro -d cnbbx/nginx-php7
 ```
 
 For information on the syntax of the nginx configuration files, see [the official documentation](http://nginx.org/en/docs/) (specifically the [Beginner's Guide](http://nginx.org/en/docs/beginners_guide.html#conf_structure)).
@@ -46,7 +46,7 @@ For information on the syntax of the nginx configuration files, see [the officia
 If you wish to adapt the default configuration, use something like the following to copy it from a running nginx container:
 
 ```console
-$ docker run --name tmp-nginx-container -d cnbbx/nginx-php7-fpm
+$ docker run --name tmp-nginx-container -d cnbbx/nginx-php7
 $ docker cp tmp-nginx-container:/etc/nginx/nginx.conf /host/path/nginx.conf
 $ docker rm -f tmp-nginx-container
 ```
@@ -54,7 +54,7 @@ $ docker rm -f tmp-nginx-container
 This can also be accomplished more cleanly using a simple `Dockerfile` (in `/host/path/`):
 
 ```dockerfile
-FROM cnbbx/nginx-php7-fpm
+FROM cnbbx/nginx-php7
 COPY nginx.conf /etc/nginx/nginx.conf
 ```
 
@@ -123,6 +123,6 @@ web:
 
 docker run --restart=always --name cnbbx_nginx -p 80:80 -p 1935:1935 -p 443:443 -v /root/server/www:/var/www/html \
 -v /root/server/nginx:/etc/nginx/conf.d/ -v /root/server/ssl:/ssl -v /root/server/logs:/var/log/nginx  \
---link=cnbbx_mysql:cnbbx/mysql8 -d cnbbx/nginx-php7-fpm
+--link=cnbbx_mysql:cnbbx/mysql8 -d cnbbx/nginx-php7
 
 ~~~

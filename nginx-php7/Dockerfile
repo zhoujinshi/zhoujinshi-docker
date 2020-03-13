@@ -147,16 +147,18 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	# forward request and error logs to docker log collector
 	&& ln -sf /dev/stdout /var/log/nginx/access.log \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log \
-	&& chown -R -v nginx:nginx /var/cache/nginx/rtmp/
+	&& chown -R -v nginx:nginx /var/cache/nginx/rtmp/ && chown -R -v nginx:nginx /root
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY vhosts/default.conf /etc/nginx/conf.d/default.conf
+COPY www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY stat.xsl /var/cache/nginx/rtmp/stat.xsl
 COPY sad.svg /usr/share/nginx/html/sad.svg
 COPY 404.html /usr/share/nginx/html/404.html
+COPY 50x.html /usr/share/nginx/html/50x.html
 COPY docker_run.sh /docker_run.sh
 
-RUN apk add subversion git
+RUN apk add subversion git && cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 
 EXPOSE 80
 EXPOSE 1935
