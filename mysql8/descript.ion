@@ -1,0 +1,1 @@
+Dockerfile mysqldump -u root -p --add-drop-table --routines --events--all-databases ¨Cforce --set-gtid-purged=OFF> data-for-upgrade.sql

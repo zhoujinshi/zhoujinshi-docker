@@ -1,11 +1,10 @@
-FROM cnbbx/php7-swoole
+FROM cnbbx/php8-swoole
 
-LABEL maintainer="admin <admin@cnbbx.com>" version="1.0"
+LABEL maintainer="admin <admin@cnbbx.com>" version="2.0"
 
-ENV NGINX_VERSION 1.17.7
+ENV NGINX_VERSION 1.19.6
 
-RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
-	&& CONFIG="\
+RUN CONFIG="\
 	--prefix=/etc/nginx \
 	--sbin-path=/usr/sbin/nginx \
 	--modules-path=/usr/lib/nginx/modules \
@@ -73,20 +72,7 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	&& wget -O ngx_cache_purge.tar.gz "http://www.cnbbx.com/ngx_cache_purge-2.3.tar.gz" \
 	&& wget -O nginx-http-concat.tar.gz "http://www.cnbbx.com/nginx-http-concat-1.2.2.tar.gz" \
 	&& wget -O nginx.tar.gz "https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz" \
-	&& wget -O nginx.tar.gz.asc "https://nginx.org/download/nginx-$NGINX_VERSION.tar.gz.asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
-	&& found=''; \
-	for server in \
-	hkp://keyserver.ubuntu.com:80 \
-	hkp://p80.pool.sks-keyservers.net:80 \
-	pgp.mit.edu \
-	ha.pool.sks-keyservers.net \
-	; do \
-	echo "Fetching GPG key $GPG_KEYS from $server"; \
-	gpg --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$GPG_KEYS" && found=yes && break; \
-	done; \
-	test -z "$found" && echo >&2 "error: failed to fetch GPG key $GPG_KEYS" && exit 1; \
-	gpg --batch --verify nginx.tar.gz.asc nginx.tar.gz \
 	&& rm -rf "$GNUPGHOME" nginx.tar.gz.asc \
 	&& mkdir -p /usr/src \
 	&& tar -zxC /usr/src -f nginx.tar.gz \
@@ -147,17 +133,18 @@ RUN GPG_KEYS=B0F4253373F8F6F510D42178520A9993A1C052F8 \
 	# forward request and error logs to docker log collector
 	&& ln -sf /dev/stdout /var/log/nginx/access.log \
 	&& ln -sf /dev/stderr /var/log/nginx/error.log \
-	&& chown -R -v nginx:nginx /var/cache/nginx/rtmp/
+	&& chown -R -v nginx:nginx /var/cache/nginx/rtmp/ && chown -R -v nginx:nginx /root
 
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY vhosts/default.conf /etc/nginx/conf.d/default.conf
+COPY www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY stat.xsl /var/cache/nginx/rtmp/stat.xsl
 COPY sad.svg /usr/share/nginx/html/sad.svg
 COPY 404.html /usr/share/nginx/html/404.html
 COPY 50x.html /usr/share/nginx/html/50x.html
 COPY docker_run.sh /docker_run.sh
 
-RUN apk add subversion git
+RUN apk add subversion git && cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 
 EXPOSE 80
 EXPOSE 1935
