@@ -1,4 +1,4 @@
-FROM cnbbx/php8-fpm
+FROM cnbbx/php7-fpm
 
 LABEL maintainer="jinge <admin@cnbbx.com>" version="1.0"
 
