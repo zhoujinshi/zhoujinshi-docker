@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM alpine:3.11
+FROM alpine:3.14
 
 LABEL maintainer="jinge <admin@cnbbx.com>" version="1.0"
 
@@ -37,9 +37,9 @@ RUN apk add --no-cache \
 	openssl
 
 # ensure www-data user exists
-RUN set -x \
-	&& addgroup -g 82 -S www-data \
-	&& adduser -u 82 -D -S -G www-data www-data
+RUN set -eux; \
+	adduser -u 82 -D -S -G www-data www-data
+	
 # 82 is the standard uid/gid for "www-data" in Alpine
 # https://git.alpinelinux.org/aports/tree/main/apache2/apache2.pre-install?h=3.9-stable
 # https://git.alpinelinux.org/aports/tree/main/lighttpd/lighttpd.pre-install?h=3.9-stable
@@ -67,15 +67,15 @@ ENV PHP_EXTRA_CONFIGURE_ARGS --enable-fpm --with-fpm-user=www-data --with-fpm-gr
 # Enable linker optimization (this sorts the hash buckets to improve cache locality, and is non-default)
 # Adds GNU HASH segments to generated executables (this is used if present, and is much faster than sysv hash; in this configuration, sysv hash is also generated)
 # https://github.com/docker-library/php/issues/272
-ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2"
+ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
-ENV PHP_LDFLAGS="-Wl,-O1 -Wl,--hash-style=both -pie"
+ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
-ENV GPG_KEYS 42670A7FE4D0441C8E4632349E4FDC074A4EF02D 5A52880781F755608BF815FC910DEB46F53EA312
+ENV GPG_KEYS CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D
 
-ENV PHP_VERSION 7.4.1
-ENV PHP_URL="http://www.cnbbx.com/php-7.4.1.tar.xz" PHP_ASC_URL="http://www.cnbbx.com/php-7.4.1.tar.xz.asc"
-ENV PHP_SHA256="561bb866bdd509094be00f4ece7c3543ec971c4d878645ee81437e291cffc762" PHP_MD5=""
+ENV PHP_VERSION 7.3.32
+ENV PHP_URL="https://www.php.net/distributions/php-7.3.32.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-7.3.32.tar.xz.asc"
+ENV PHP_SHA256="94effa250b80f031e77fbd98b6950c441157a2a8f9e076ee68e02f5b0b7a3fd9"
 
 RUN set -xe; \
 	\
@@ -95,15 +95,15 @@ RUN set -xe; \
 		fi; \
 		\
 		if [ -n "$PHP_ASC_URL" ]; then \
-		wget -O php.tar.xz.asc "$PHP_ASC_URL"; \
+		curl -fsSL -o php.tar.xz.asc "$PHP_ASC_URL"; \
 		export GNUPGHOME="$(mktemp -d)"; \
 		for key in $GPG_KEYS; do \
-		gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
+		gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key"; \
 		done; \
 		gpg --batch --verify php.tar.xz.asc php.tar.xz; \
-		command -v gpgconf > /dev/null && gpgconf --kill all; \
+		gpgconf --kill all; \
 		rm -rf "$GNUPGHOME"; \
-		fi; \
+	fi; \
 	\
 	apk del --no-network .fetch-deps
 
@@ -166,13 +166,12 @@ RUN set -xe \
 	--with-openssl \
 	--enable-xml \
 	--with-zlib \
-	--with-zip \
-	--with-webp \
-	--with-jpeg \
-	--with-freetype \
-	--enable-gd \
+	--enable-zip \
+	--with-gd \
 	--with-pdo-dblib \
 	--with-pear \
+	--with-freetype-dir \
+	--with-jpeg-dir \
 	--enable-fd-setsize=11111 \
 	\
 	# bundled pcre does not support JIT on s390x
